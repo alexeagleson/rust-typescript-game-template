@@ -1,0 +1,17 @@
+[package]
+authors = ["Alex Eagleson <alexeagleson@gmail.com>"]
+description = "A library for handling position on a 2D grid. Intended for use in game development."
+edition = "2021"
+homepage = "https://github.com/alexeagleson/ae-position"
+license = "MIT OR Apache-2.0"
+name = "ae-position"
+readme = "README.md"
+repository = "https://github.com/alexeagleson/ae-position"
+rust-version = "1.65"
+version = "0.1.4"
+
+[dependencies]
+ae-direction = {path = "../ae-direction"}
+serde = {version = "1.0.151", default-features = false, features = ["derive"]}
+serde_json = {version = "1.0.90", default-features = false}
+typeshare = "1.0.0"

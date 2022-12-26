@@ -1,0 +1,25 @@
+.game-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  align-items: center;
+}
+
+.canvas-and-log-container {
+  display: flex;
+  flex-direction: row;
+  column-gap: 12px;
+  max-height: min-content;
+  padding: 4px;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+.canvas-container {
+  position: relative;
+}
+
+.log-container {
+  width: calc(480px / 2);
+  overflow-x: scroll;
+}

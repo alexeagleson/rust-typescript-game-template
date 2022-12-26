@@ -1,0 +1,5 @@
+/target
+/types.ts
+/README.dev.md
+.env
+/database.sqlite*
