@@ -5,6 +5,7 @@ use crate::{
 };
 use ae_direction::{Cardinal, Direction};
 use ae_position::Delta;
+use log::info;
 use warp::ws::Message;
 
 use super::connections::ConnectionsLock;
@@ -23,8 +24,7 @@ pub async fn handle_message(
         return;
     };
 
-    // Log the socket message from the client
-    // println!("{}", msg);
+    info!("{}", msg);
 
     let request = serde_json::from_str::<ClientMessage>(msg);
 
@@ -52,7 +52,6 @@ pub async fn handle_message(
                         .expect("Serialize should work");
 
                 for (&_uid, sender) in connections.read().await.0.iter() {
-                    println!("sending add player to {}", _uid);
                     if let Err(_disconnected) =
                         sender.send(Message::text(&player_positions_serialized))
                     {
@@ -93,7 +92,7 @@ pub async fn handle_message(
                 }
             }
             ClientMessage::TileClick(pos) => {
-                println!("Player {} clicked something", id);
+                info!("Handling click for player: {}", id);
                 let world = world.write().await;
 
                 let mut clicked_player_id: Option<UserId> = None;
@@ -122,6 +121,8 @@ pub async fn handle_message(
             }
 
             ClientMessage::Keypress(key) => {
+                // A lot of this is game logic and probably does not belong in the
+                // websocket message handler file
                 let key_string = key.to_string();
                 let db = db.read().await;
 
@@ -131,12 +132,13 @@ pub async fn handle_message(
                     .await
                     .unwrap();
 
-                let moves = sqlx::query!("SELECT id FROM moves")
+                let count_results = sqlx::query!("SELECT COUNT(id) as count FROM moves")
                     .fetch_all(&db.0)
                     .await
                     .unwrap();
 
-                let move_count: ServerMessage = ServerMessage::MoveCount(moves.len() as i32);
+                // Count should have a single record result with a count property of the number of found rows
+                let move_count: ServerMessage = ServerMessage::MoveCount(count_results[0].count);
                 let move_count_serialized: String =
                     serde_json::to_string(&move_count).expect("that should work");
 

@@ -73,16 +73,14 @@ async fn main() {
         })
         .with(any_origin_get);
 
-
-    // GET / -> index html
-    let index = warp::path::end()
-        .map(|| warp::reply::html(r#"<html>There is nothing to see here.</html>"#));
+    // // GET / -> index html
+    // let index = warp::path::end()
+    //     .map(|| warp::reply::html(r#"<html>There is nothing to see here.</html>"#));
 
     // Serve static directory -- not currently used
-    // let routes = warp::fs::dir("client/static").or(game_config).or(game);
+    let index = warp::fs::dir("client/dist");
 
     let routes = index.or(game_config).or(game);
 
-
-    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
+    warp::serve(routes).run(([0, 0, 0, 0], 3030)).await;
 }

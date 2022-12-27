@@ -3,6 +3,7 @@ use crate::websocket::connections::USER_ID_COUNTER;
 use crate::websocket::message::handle_message;
 use crate::{game::world::WorldLock, websocket::disconnect::handle_disconnect};
 use futures_util::{SinkExt, StreamExt, TryFutureExt};
+use log::{info, error};
 use std::sync::atomic::Ordering;
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
@@ -18,7 +19,7 @@ pub async fn handle_new_connection(
 ) {
     let new_id = USER_ID_COUNTER.fetch_add(1, Ordering::Relaxed);
 
-    eprintln!("new chat user: {}", new_id);
+    info!("New connection: {}", new_id);
 
     // Split the socket into a sender and receive of messages.
     let (mut user_ws_tx, mut user_ws_rx) = ws.split();
@@ -32,7 +33,7 @@ pub async fn handle_new_connection(
             user_ws_tx
                 .send(message)
                 .unwrap_or_else(|e| {
-                    eprintln!("websocket send error: {}", e);
+                    error!("websocket send error: {}", e);
                 })
                 .await;
         }
@@ -46,7 +47,7 @@ pub async fn handle_new_connection(
         let msg = match result {
             Ok(msg) => msg,
             Err(e) => {
-                eprintln!("websocket error(uid={}): {}", new_id, e);
+                error!("websocket error(uid={}): {}", new_id, e);
                 break;
             }
         };

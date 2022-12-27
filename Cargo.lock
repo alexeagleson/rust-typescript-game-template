@@ -419,12 +419,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "gamejam-2023"
+name = "gamejam"
 version = "0.1.0"
 dependencies = [
  "ae-direction",
  "ae-position",
  "futures-util",
+ "log",
  "pretty_env_logger",
  "rand",
  "serde",

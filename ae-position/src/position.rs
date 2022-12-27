@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
 use crate::delta::{Delta, CARDINAL_DELTAS, ORDINAL_DELTAS};
