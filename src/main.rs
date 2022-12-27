@@ -82,5 +82,5 @@ async fn main() {
 
     let routes = index.or(game_config).or(game);
 
-    warp::serve(routes).run(([0, 0, 0, 0], 3030)).await;
+    warp::serve(routes).run(([0, 0, 0, 0], 8080)).await;
 }

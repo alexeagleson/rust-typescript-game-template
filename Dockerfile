@@ -3,13 +3,13 @@ FROM rust:1.66-slim-buster as builder
 
 ENV project=gamejam
 
-RUN apt update
+### SERVER STUFF ###
 
+# Required for sqlx-cli
+RUN apt update
 RUN apt install -y pkg-config libssl-dev openssl
 
 RUN cargo install sqlx-cli
-
-
 
 WORKDIR /usr/src/${project}/ae-position
 
@@ -39,69 +39,68 @@ COPY ./Cargo.lock .
 # Create fake main.rs file in src and build
 RUN mkdir ./src && echo 'fn main() { println!("Dummy!"); }' > ./src/main.rs
 
-RUN cargo build
+# Create a dummy release build that builds all the app's real dependencies
+RUN cargo build --release
 
+# Remove dummy files
 RUN rm ./**/*.rs
 
+# Copy actual source code
 COPY ./src ./src
-
 COPY ./ae-direction/src ./ae-direction/src
 COPY ./ae-position/src ./ae-position/src
 
+# Copy additional relevant fies
 COPY ./.env ./.env
-
 COPY ./migrations ./migrations
 
+# Create initial database
 RUN sqlx database create
-
 RUN sqlx migrate run
 
-RUN rm ./target/debug/deps/${project}*
+# Remove the dummy build
+RUN rm ./target/release/deps/${project}*
 
-RUN cargo build
+# Build the real app without recompiling its dependencies
+RUN cargo build --release
 
-EXPOSE 3030
-
-# CLIENT
-
+### CLIENT STUFF ###
 
 SHELL [ "/bin/bash", "-l", "-c" ]
 
+# Install NVM
 RUN apt install -y curl
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-# this now works
-RUN nvm install 18
 
+# Install Node (to build the Vite app)
+RUN nvm install 18
 RUN nvm use 18
 
 COPY ./client ./client
 
 WORKDIR /usr/src/${project}/client
 
+# Do a production build of the Vite client
 RUN npm install
-
 RUN npm run build
-
-RUN ls
 
 WORKDIR /usr/src/${project}/
 
-CMD [ "cargo", "run" ]
+# Start a fresh image that will only contain the compiled code and
+# leave behind all the intermediary stuff we added that we don't need anymore
+FROM rust:1.66-slim-buster
 
+ENV project=gamejam
 
-# for release
+WORKDIR /usr/src/${project}/
 
-# # our final base
-# FROM rust:1.66-slim-buster
+# Copy the server build artifact from the build stage
+COPY --from=builder /usr/src/${project}/target/release/${project} .
 
-# ENV project=gamejam
+# Copy the production build of the Vite app
+COPY --from=builder /usr/src/${project}/client/dist ./client/dist
 
-# # copy the build artifact from the build stage
-# COPY --from=builder /usr/src/${project}/target/debug/${project} .
+EXPOSE 8080
 
-# WORKDIR /usr/src/${project}/
-
-# EXPOSE 3030
-
-# # needs to run the executable not cargo debug
-# CMD [ "cargo", "run" ]
+# Run the game server (which also serves the client app in a static directory)
+CMD ["./gamejam"]

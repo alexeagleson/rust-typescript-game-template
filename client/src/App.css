@@ -15,11 +15,18 @@
   border-radius: 4px;
 }
 
+@media (max-width: 600px) {
+  .canvas-and-log-container {
+    flex-direction: column;
+    column-gap: 0;
+    row-gap: 12px;
+  }
+}
+
 .canvas-container {
   position: relative;
 }
 
 .log-container {
-  width: calc(480px / 2);
   overflow-x: scroll;
 }

@@ -4,6 +4,8 @@ import { HoverMenuProps } from "./components/HoverMenu/HoverMenu";
 import { initializeGame } from "./game/initialize";
 import { PlayerDetails } from "./utility/types";
 import "./App.css";
+import { ControlOverlay } from "./components/ControlOverlay/ControlOverlay";
+import { DirectionHandlers } from "./game/input";
 
 const App = () => {
   const initialized = useRef<boolean>(false);
@@ -13,6 +15,8 @@ const App = () => {
   const [hoverMenu, setHoverMenu] = useState<HoverMenuProps>();
   const [log, setLog] = useState<string[]>([]);
   const [moveCount, setMoveCount] = useState<number>();
+  const [directionHandlers, setDirectionHandlers] =
+    useState<DirectionHandlers>();
 
   const onHover = (x: number, y: number, playerDetails?: PlayerDetails) => {
     if (!playerDetails) {
@@ -32,14 +36,19 @@ const App = () => {
   useEffect(() => {
     if (initialized.current === false) {
       initialized.current = true;
-      initializeGame(onHover, onClick, setMoveCount).then(({ gameCanvas }) => {
-        canvasContainer.current?.appendChild(gameCanvas);
-        const canvasHeight = gameCanvas.height + "px";
-        if (canvasContainer.current && logContainer.current) {
-          canvasContainer.current.style.height = canvasHeight;
-          logContainer.current.style.height = canvasHeight;
+      initializeGame(onHover, onClick, setMoveCount).then(
+        ({ gameCanvas, directionHandlers: dirHandlers }) => {
+          setDirectionHandlers(dirHandlers);
+          canvasContainer.current?.appendChild(gameCanvas);
+          const canvasHeight = gameCanvas.height + "px";
+          const canvasWidth = gameCanvas.width + "px";
+          if (canvasContainer.current && logContainer.current) {
+            canvasContainer.current.style.height = canvasHeight;
+            logContainer.current.style.width = canvasWidth;
+            logContainer.current.style.height = canvasHeight;
+          }
         }
-      });
+      );
     }
   });
 
@@ -49,6 +58,9 @@ const App = () => {
       <div className="canvas-and-log-container">
         <div className="canvas-container" ref={canvasContainer}>
           {hoverMenu && <HoverMenu {...hoverMenu} />}
+          {directionHandlers && (
+            <ControlOverlay directionHandlers={directionHandlers} />
+          )}
         </div>
         <div ref={logContainer} className="log-container">
           <Log log={log} />

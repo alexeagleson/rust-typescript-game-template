@@ -4,15 +4,35 @@ import { TILE_SIZE } from "../utility/config";
 import { ClientMessage, Key, Position, ServerMessage } from "../utility/types";
 import { SafeSend } from "./connection";
 
+export interface DirectionHandlers {
+  up: () => void;
+  left: () => void;
+  right: () => void;
+  down: () => void;
+}
+
+const isTouchStart = (e: MouseEvent | TouchEvent): e is TouchEvent => {
+  return e.type === "touchstart";
+};
+
 export const addInputListeners = (
   gameCanvas: HTMLCanvasElement,
   updateHoverMenuPosition: (x: number, y: number) => void,
   safeSend: SafeSend
 ) => {
-  const processMouseEvent = (e: MouseEvent) => {
+  const processTileSelectEvent = (e: MouseEvent | TouchEvent) => {
     const rect = gameCanvas.getBoundingClientRect();
-    const xPixel = e.clientX - rect.left;
-    const yPixel = e.clientY - rect.top;
+
+    let xPixel: number;
+    let yPixel: number;
+
+    if (isTouchStart(e)) {
+      xPixel = e.touches[0].clientX - rect.left;
+      yPixel = e.touches[0].clientY - rect.top;
+    } else {
+      xPixel = e.clientX - rect.left;
+      yPixel = e.clientY - rect.top;
+    }
 
     const pixelPos: Position = { x: xPixel, y: yPixel };
     const tilePos: Position = {
@@ -24,18 +44,28 @@ export const addInputListeners = (
   };
 
   gameCanvas.onmousemove = (e) => {
-    const { tilePos, pixelPos } = processMouseEvent(e);
+    const { tilePos, pixelPos } = processTileSelectEvent(e);
     updateHoverMenuPosition(pixelPos.x, pixelPos.y);
     safeSend({ type: "tileHover", content: tilePos });
   };
 
-  gameCanvas.onmousedown = (e) => {
-    const { tilePos } = processMouseEvent(e);
+  const onTileSelect = (e: MouseEvent | TouchEvent) => {
+    const { tilePos } = processTileSelectEvent(e);
     safeSend({ type: "tileClick", content: tilePos });
   };
 
+  gameCanvas.onmousedown = onTileSelect;
+  gameCanvas.ontouchstart = onTileSelect;
+
   const sendKey = (key: Key) => {
     safeSend({ type: "keypress", content: key });
+  };
+
+  const directionHandlers: DirectionHandlers = {
+    up: () => sendKey(Key.Up),
+    left: () => sendKey(Key.Left),
+    right: () => sendKey(Key.Right),
+    down: () => sendKey(Key.Down),
   };
 
   // Registers a key handler on the main window for
@@ -45,17 +75,19 @@ export const addInputListeners = (
 
     switch (e.key) {
       case "ArrowUp":
-        sendKey(Key.Up);
+        directionHandlers.up();
         break;
       case "ArrowRight":
-        sendKey(Key.Right);
+        directionHandlers.right();
         break;
       case "ArrowDown":
-        sendKey(Key.Down);
+        directionHandlers.down();
         break;
       case "ArrowLeft":
-        sendKey(Key.Left);
+        directionHandlers.left();
         break;
     }
   });
+
+  return directionHandlers;
 };

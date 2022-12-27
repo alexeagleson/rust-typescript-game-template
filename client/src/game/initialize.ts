@@ -80,7 +80,7 @@ export const initializeGame = async (
     onMessage,
   });
 
-  addInputListeners(gameCanvas, updateHoverMenuPosition, safeSend);
+  const directionHandlers = addInputListeners(gameCanvas, updateHoverMenuPosition, safeSend);
 
   let interval = setInterval(() => {
     let result = safeSend({ type: "initialize" });
@@ -89,5 +89,5 @@ export const initializeGame = async (
     }
   }, 100);
 
-  return { gameCanvas };
+  return { gameCanvas, directionHandlers };
 };

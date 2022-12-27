@@ -2,8 +2,8 @@ use ae_position::Position;
 
 use crate::api::MapDimensions;
 
-pub const DEFAULT_MAP_WIDTH: i32 = 20;
-pub const DEFAULT_MAP_HEIGHT: i32 = 20;
+pub const DEFAULT_MAP_WIDTH: i32 = 16;
+pub const DEFAULT_MAP_HEIGHT: i32 = 16;
 
 #[derive(Debug)]
 pub struct Map {
