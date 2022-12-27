@@ -3,3 +3,4 @@
 /README.dev.md
 .env
 /database.sqlite*
+fly.toml

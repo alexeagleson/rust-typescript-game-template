@@ -81,6 +81,26 @@ Then access the game at:
 
 Or deploy wherever you want.
 
+### Deployment
+
+This project can be deployed via Docker on [https://fly.io/](https://fly.io/)
+
+Install the fly CLI and then:
+
+```
+fly auth login
+
+fly launch
+```
+
+Fly will launch the app and create a `fly.toml` in the root directory with project config options.
+
+Subsequent re-launches using that configuration to overwrite can be made with:
+
+```
+fly deploy
+```
+
 # License
 
 Distributed under the terms of both the MIT license and the Apache License (Version 2.0).
