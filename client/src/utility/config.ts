@@ -7,7 +7,7 @@ export const TILE_SIZE = 24;
 
 const CURRENT_URL = new URL(document.URL);
 
-const SSL = (CURRENT_URL.protocol = "http:" ? "" : "s");
+const SSL = (CURRENT_URL.protocol === "http:" ? "" : "s");
 
 const IS_PROD = SSL === "s";
 
