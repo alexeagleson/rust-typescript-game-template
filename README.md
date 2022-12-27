@@ -1,22 +1,29 @@
-# Game Template
+# Gamejam
 
 A complete template for building a 2D grid based game with a Rust backend and Typescript frontend.
 
-Serialization (serde)
-Shared types (typeshare)
-Data persistence (sqlx)
-Web server (warp)
+## Demo
 
-Frontend 
+[https://icy-shape-6464.fly.dev/]()
 
-Tooling & bundling (Vite)
-UI (React)
-Canvas rendering (Pixi.js)
+## Structure
 
+### Backend
+
+- Serialization (serde)
+- Shared types (typeshare)
+- Data persistence (sqlx)
+- Web server (warp)
+
+### Frontend
+
+- Tooling & bundling (Vite)
+- UI (React)
+- Game rendering (Pixi.js)
 
 ## Usage
 
-Local development:
+### Local development:
 
 A couple of Rust CLI tools are required to build the project:
 
@@ -42,8 +49,38 @@ sqlx migrate run
 typeshare ./ --lang=typescript --output-file=client/src/utility/types.ts
 ```
 
+Then run the server with:
+
+```
+cargo run
+```
+
+Then run the client dev server (including hot reloading) with:
+
+```
+cd client
+npm install
+npm run dev
+```
+
+### Release Build
+
+The easiest way to build for release is with the included Dockerfile.
+
+You will need Docker installed for this.
+
+```
+docker build -t gamejam .
+
+docker run -p 8080:8080 gamejam
+```
+
+Then access the game at:
+
+[http://localhost:8080]()
+
+Or deploy wherever you want.
 
 # License
 
-AE Position is distributed under the terms of both the MIT license and the
-Apache License (Version 2.0).
+Distributed under the terms of both the MIT license and the Apache License (Version 2.0).
