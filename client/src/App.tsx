@@ -38,12 +38,18 @@ const App = () => {
         ({ gameCanvas, directionHandlers: dirHandlers }) => {
           setDirectionHandlers(dirHandlers);
           canvasContainer.current?.appendChild(gameCanvas);
-          const canvasHeight = gameCanvas.height + "px";
-          const canvasWidth = gameCanvas.width + "px";
+          let canvasHeight = gameCanvas.height;
+          const canvasWidth = gameCanvas.width;
           if (canvasContainer.current && logContainer.current) {
-            canvasContainer.current.style.height = canvasHeight;
-            logContainer.current.style.width = canvasWidth;
-            logContainer.current.style.height = canvasHeight;
+            canvasContainer.current.style.height = canvasHeight + "px";
+            logContainer.current.style.width = canvasWidth + "px";
+
+            // Log height is shorter on mobile
+            if (window.matchMedia("(max-width: 600px)").matches) {
+              canvasHeight = Math.floor(canvasHeight / 2);
+            }
+
+            logContainer.current.style.height = canvasHeight + "px";
           }
         }
       );
