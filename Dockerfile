@@ -76,12 +76,18 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | b
 RUN nvm install 18
 RUN nvm use 18
 
-COPY ./client ./client
+# Copy package files to build and cache client dependencies
+COPY ./client/package.json ./client/package.json
+COPY ./client/package-lock.json ./client/package-lock.json
 
 WORKDIR /usr/src/${project}/client
 
-# Do a production build of the Vite client
+# Install client dependencies
 RUN npm install
+
+COPY ./client .
+
+# Do a production build of the Vite client
 RUN npm run build
 
 WORKDIR /usr/src/${project}/
