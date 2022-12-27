@@ -1,10 +1,10 @@
-# Gamejam
+# Rust / Typescript Game Template
 
 A complete template for building a 2D grid based game with a Rust backend and Typescript frontend.
 
 ## Demo
 
-[https://icy-shape-6464.fly.dev/]()
+[https://icy-shape-6464.fly.dev/](https://icy-shape-6464.fly.dev/)
 
 ## Structure
 

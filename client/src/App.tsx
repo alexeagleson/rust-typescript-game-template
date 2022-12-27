@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Log, HoverMenu } from "./components";
-import { HoverMenuProps } from "./components/HoverMenu/HoverMenu";
+import { Log, HoverMenu, ControlOverlay, HoverMenuProps } from "./components";
 import { initializeGame } from "./game/initialize";
 import { PlayerDetails } from "./utility/types";
-import "./App.css";
-import { ControlOverlay } from "./components/ControlOverlay/ControlOverlay";
 import { DirectionHandlers } from "./game/input";
+import "./App.css";
 
 const App = () => {
   const initialized = useRef<boolean>(false);
